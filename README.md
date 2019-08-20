@@ -10,7 +10,3 @@ To use stack-fix:
 
 * run `stack-fix` in the root of your stack project.
 * enjoy not having to waste countless hours on fixing build issues which can be fixed automatically by `stack-fix`
-
-# TODO
-
-* allow it to run with custom `stack build` command
