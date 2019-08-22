@@ -65,6 +65,7 @@ let
           haskell.compiler.ghc864
           haskellPackages.cabal-install
           unstable.haskellPackages.stack
+          binutils.bintools # required on WSL
         ];
       };
     };
@@ -83,6 +84,40 @@ Run this to update the cabal pacakges:
 ```shell
 cabal v1-update
 ```
+
+### Setting up your development tools
+
+The recommended editors are Atom and VSCode together with the Haskell IDE Enginer extension.
+
+To install the HIE executable required by the editor extensions via `~/.nixpkgs/config.nix` make changes reflected in the following:
+
+```nix
+let
+  all-hies = import (fetchTarball "https://github.com/infinisil/all-hies/tarball/master") {};
+  config = {
+    allowUnfree = true;
+
+    packageOverrides = pkgs: with pkgs;
+      let jdk = openjdk11; in rec {
+      unstable = import <nixpkgs> { inherit config; };
+
+      all = pkgs.buildEnv {
+        name = "all";
+
+        paths = [
+          haskell.compiler.ghc864
+          haskellPackages.cabal-install
+          unstable.haskellPackages.stack
+          binutils.bintools # required on WSL
+          (all-hies.selection { selector = p: { inherit (p) ghc864; }; })
+        ];
+      };
+    };
+  };
+in config
+```
+
+Then install the HIE extension inside Atom or VSCode.
 
 ### Building the project
 
