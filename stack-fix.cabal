@@ -5,7 +5,7 @@ cabal-version:       2.4
 name:                stack-fix
 version:             0.1.0.0
 synopsis:            Console program used to fix Stack build errors automatically
--- description:
+description:         Stack fix works by running `stack build` and by parsing and interpreting the build errors/suggestions it applies any build fixes required to the stack.yaml, .cabal, etc. These fixes usually involve specifying build dependencies versions or adding new build dependencies.
 homepage:            https://github.com/razvan-panda/haskell-stack-fix
 -- bug-reports:
 license:             AGPL-3.0-only
@@ -15,6 +15,10 @@ maintainer:          razvan.panda@gmail.com
 -- copyright:
 category:            Development
 extra-source-files:  CHANGELOG.md, README.md
+
+source-repository head
+  type:     git
+  location: https://github.com/razvan-panda/haskell-stack-fix.git
 
 executable stack-fix
   main-is:             Main.hs
