@@ -3,10 +3,10 @@
 module Main where
 
 import Control.Monad.IO.Class (liftIO)
-import Data.Text (pack)
+import Data.Text (pack, append, Text(..))
 import Data.Text.IO (putStr, putStrLn)
 import           Data.Bifoldable                ( bifold )
-import Prelude(IO, ($), return, (<>), Either(..), Bool(..), (<$>))
+import Prelude(IO, ($), return, (<>), Either(..), Bool(..), String(..), (<$>))
 import Turtle (shell, inshellWithErr, empty, die, repr, cd, home, fromText, sh, strict, (</>), ExitCode(..))
 import Turtle.Line (lineToText)
 import Turtle.Shell (Shell(..))
@@ -17,19 +17,23 @@ import Options (runCommand, Options(..), defineOptions, simpleOption)
 import System.Exit (exitSuccess)
 
 
-newtype CmdOptions = CmdOptions {
-  printVersion :: Bool
+data CmdOptions = CmdOptions {
+  printVersion   :: Bool,
+  stackBuildArgs :: String
 }
 
 instance (opts ~ CmdOptions) => Options opts where
-  defineOptions = CmdOptions <$> simpleOption "version" False
+  defineOptions = CmdOptions
+    <$> simpleOption "version" False
         "Print the version of stack-fix."
+    <*> simpleOption "args" ""
+        "Pass arguments to `stack build`"
 
 main :: IO ()
 main = runCommand $ \opts args ->
   if printVersion opts
     then do
-      putStrLn (pack $ showVersion version)
+      putStrLn $ pack $ showVersion version
       exitSuccess
     else do
       putStrLn "cd to project root"
@@ -52,10 +56,10 @@ main = runCommand $ \opts args ->
       putStrLn "Finished direnv allow"
 
       putStrLn "Starting `stack build`"
-      sh runStackBuild
+      sh $ runStackBuild $ append "stack build " $ pack $ stackBuildArgs opts
       putStrLn "Finished `stack build`"
 
-runStackBuild :: Shell ()
-runStackBuild = do
-  out <- inshellWithErr "stack build" empty
+runStackBuild :: Text -> Shell ()
+runStackBuild cmd = do
+  out <- inshellWithErr cmd empty
   liftIO $ putStrLn $ lineToText $ bifold out
