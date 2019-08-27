@@ -4,14 +4,14 @@ let
 
   inherit (nixpkgs) pkgs;
 
-  f = { mkDerivation, base, stdenv, turtle, text }:
+  f = { mkDerivation, base, options, stdenv, text, turtle }:
       mkDerivation {
         pname = "stack-fix";
         version = "0.1.0.0";
         src = ./.;
         isLibrary = false;
         isExecutable = true;
-        executableHaskellDepends = [ base turtle text ];
+        executableHaskellDepends = [ base options text turtle ];
         homepage = "https://github.com/razvan-panda/haskell-stack-fix";
         description = "Console program used to fix Stack build errors automatically";
         license = stdenv.lib.licenses.agpl3;
